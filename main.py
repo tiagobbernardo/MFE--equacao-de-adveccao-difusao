@@ -42,7 +42,16 @@ def solve(v, D):
 
         for i in range(1, Nx - 1):
 
-            adv = -v * dt / dx * (u[i] - u[i - 1])
+            C = v * dt / dx
+
+            adv = (
+                -0.5 * C * (u[i+1] - u[i-1])
+                + 0.5 * C**2 * (u[i+1] - 2*u[i] + u[i-1])
+            )
+
+            diff = D * dt / dx**2 * (u[i+1] - 2*u[i] + u[i-1])
+
+            u_new[i] = u[i] + adv + diff
 
             diff = D * dt / dx**2 * (u[i + 1] - 2*u[i] + u[i - 1])
 
@@ -54,11 +63,9 @@ def solve(v, D):
 
 cases = {
     "Advecção dominante": (2.0, 1e-5),
-    "Difusão dominante": (0.1, 1e-3),
+    "Difusão dominante": (0.05, 1e-2),
     "Equilibrado": (1.0, 5e-3)
 }
-
-results = {}
 
 results = {}
 

@@ -1,0 +1,365 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{float}
+
+\title{\textbf{Equação de Advecção-Difusão}\\Modelação em física e engenharia}
+
+\author{Tiago Bernardo - 53117 \and Gabriel Marques - 53xxx}
+
+\date{Maio 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Introdução}
+
+A equação de advecção--difusão é uma das equações diferenciais parciais mais importantes na modelação de fenómenos físicos envolvendo transporte e dissipação. Esta equação descreve a evolução temporal e espacial de uma quantidade conservada sujeita simultaneamente a mecanismos de transporte advectivo e difusão.
+
+Este tipo de equação surge em diversas áreas da física e engenharia, incluindo dinâmica de fluidos, transferência de calor, dispersão de poluentes, propagação de espécies químicas e modelação atmosférica.
+
+O principal objetivo deste trabalho consiste na simulação numérica da equação de advecção--difusão unidimensional utilizando diferentes esquemas numéricos de diferenças finitas. Em particular, serão comparados os métodos centrado e upwind, analisando-se os seus efeitos na estabilidade, precisão e difusão numérica.
+
+Além disso, será estudada a influência do número de Péclet nos diferentes regimes físicos do problema, permitindo compreender a competição entre os mecanismos de transporte e dissipação.
+
+\section{Fundamentos Teóricos}
+
+\subsection{Equação de Advecção--Difusão}
+
+A equação de advecção--difusão unidimensional pode ser escrita na forma
+
+\[
+\frac{\partial u}{\partial t}
++
+v \frac{\partial u}{\partial x}
+=
+D \frac{\partial^2 u}{\partial x^2},
+\]
+
+onde:
+\begin{itemize}
+    \item $u(x,t)$ representa a quantidade transportada;
+    \item $v$ corresponde à velocidade de advecção;
+    \item $D$ representa o coeficiente de difusão.
+\end{itemize}
+
+O termo de advecção,
+\[
+v \frac{\partial u}{\partial x},
+\]
+descreve o transporte da quantidade ao longo do domínio espacial.
+
+Por outro lado, o termo difusivo,
+\[
+D \frac{\partial^2 u}{\partial x^2},
+\]
+representa o espalhamento da quantidade devido a processos dissipativos.
+
+\subsection{Número de Péclet}
+
+O número de Péclet é uma grandeza adimensional utilizada para caracterizar a relação entre os efeitos de advecção e difusão, sendo definido por
+
+\[
+Pe = \frac{vL}{D},
+\]
+
+onde $L$ representa um comprimento característico do sistema.
+
+Quando
+\[
+Pe \gg 1,
+\]
+o transporte advectivo domina o comportamento do sistema.
+
+Por outro lado, quando
+\[
+Pe \ll 1,
+\]
+os efeitos difusivos tornam-se predominantes.
+
+O estudo de diferentes regimes do número de Péclet constitui um dos principais objetivos deste trabalho.
+
+\subsection{Perfil Inicial Gaussiano}
+
+Como condição inicial, será utilizado um perfil Gaussiano da forma
+
+\[
+u(x,0)
+=
+\exp\left(
+-\frac{(x-x_0)^2}{\sigma^2}
+\right),
+\]
+
+onde $x_0$ representa a posição inicial do pico e $\sigma$ controla a largura do perfil.
+
+A escolha deste perfil deve-se ao seu comportamento suave e à sua adequação para a análise simultânea dos efeitos de advecção e difusão.
+
+Fisicamente, este perfil pode representar uma concentração inicial localizada, como por exemplo a libertação de um poluente num fluido.
+
+\section{Métodos Numéricos}
+
+Para resolver numericamente a equação de advecção--difusão foi utilizado o método das diferenças finitas, discretizando-se o domínio espacial e temporal.
+
+Considere-se uma malha uniforme definida por
+
+\[
+x_i = i\Delta x,
+\qquad
+t^n = n\Delta t,
+\]
+
+onde:
+\begin{itemize}
+    \item $\Delta x$ representa o passo espacial;
+    \item $\Delta t$ representa o passo temporal.
+\end{itemize}
+
+A solução numérica é representada por
+
+\[
+u_i^n \approx u(x_i,t^n).
+\]
+
+\subsection{Discretização Temporal}
+
+A derivada temporal foi aproximada utilizando o método de Euler explícito:
+
+\[
+\frac{\partial u}{\partial t}
+\approx
+\frac{u_i^{n+1}-u_i^n}{\Delta t}.
+\]
+
+Este método permite calcular iterativamente a solução no instante seguinte a partir dos valores conhecidos no instante atual.
+
+\subsection{Discretização do Termo Difusivo}
+
+O termo difusivo foi aproximado através de diferenças centradas de segunda ordem:
+
+\[
+\frac{\partial^2 u}{\partial x^2}
+\approx
+\frac{
+u_{i+1}^n
+-
+2u_i^n
++
+u_{i-1}^n
+}{
+(\Delta x)^2
+}.
+\]
+
+Esta aproximação apresenta boa precisão e é amplamente utilizada na resolução numérica de equações diferenciais parciais.
+
+\subsection{Esquema Centrado para o Termo Advectivo}
+
+No esquema centrado, a derivada espacial de primeira ordem é aproximada por diferenças centradas:
+
+\[
+\frac{\partial u}{\partial x}
+\approx
+\frac{
+u_{i+1}^n
+-
+u_{i-1}^n
+}{
+2\Delta x
+}.
+\]
+
+Substituindo todas as aproximações na equação de advecção--difusão obtém-se:
+
+\[
+u_i^{n+1}
+=
+u_i^n
+-
+\frac{v\Delta t}{2\Delta x}
+\left(
+u_{i+1}^n-u_{i-1}^n
+\right)
++
+\frac{D\Delta t}{(\Delta x)^2}
+\left(
+u_{i+1}^n-2u_i^n+u_{i-1}^n
+\right).
+\]
+
+O esquema centrado apresenta elevada precisão espacial, mas pode tornar-se instável em regimes dominados pela advecção.
+
+\subsection{Esquema Upwind}
+
+No esquema upwind, a derivada espacial é calculada utilizando informação proveniente da direção do escoamento.
+
+Para velocidades positivas $(v>0)$ utiliza-se:
+
+\[
+\frac{\partial u}{\partial x}
+\approx
+\frac{
+u_i^n-u_{i-1}^n
+}{
+\Delta x
+}.
+\]
+
+A discretização completa torna-se:
+
+\[
+u_i^{n+1}
+=
+u_i^n
+-
+\frac{v\Delta t}{\Delta x}
+\left(
+u_i^n-u_{i-1}^n
+\right)
++
+\frac{D\Delta t}{(\Delta x)^2}
+\left(
+u_{i+1}^n-2u_i^n+u_{i-1}^n
+\right).
+\]
+
+O método upwind apresenta maior estabilidade numérica relativamente ao esquema centrado. Contudo, introduz difusão numérica artificial, conduzindo ao alisamento progressivo da solução.
+
+\subsection{Condições de Estabilidade}
+
+A estabilidade do método numérico depende da escolha adequada dos parâmetros $\Delta x$ e $\Delta t$.
+
+Define-se o número de Courant como
+
+\[
+C
+=
+\frac{v\Delta t}{\Delta x}.
+\]
+
+Valores elevados de $C$ podem provocar instabilidades numéricas e crescimento artificial de oscilações.
+
+No caso do termo difusivo, define-se também o parâmetro
+
+\[
+r
+=
+\frac{D\Delta t}{(\Delta x)^2}.
+\]
+
+A escolha destes parâmetros é fundamental para garantir estabilidade e precisão nas simulações realizadas.
+
+\section{Resultados Numéricos}
+
+Nesta secção são apresentados os resultados obtidos para diferentes regimes do número de Péclet, analisando-se o comportamento da solução numérica e comparando os esquemas centrado e upwind.
+
+Foi utilizado como condição inicial um perfil Gaussiano da forma
+
+\[
+u(x,0)
+=
+\exp\left(
+-\frac{(x-x_0)^2}{\sigma^2}
+\right),
+\]
+
+permitindo observar simultaneamente os efeitos de transporte e difusão ao longo do tempo.
+
+As simulações foram realizadas num domínio unidimensional uniforme, considerando diferentes valores da velocidade de advecção $v$ e do coeficiente de difusão $D$.
+
+\subsection{Regime Dominado pela Difusão}
+
+Para valores reduzidos do número de Péclet $(Pe \ll 1)$, o termo difusivo domina o comportamento da solução.
+
+Observa-se que o perfil Gaussiano sofre um espalhamento progressivo, acompanhado de uma diminuição da amplitude máxima.
+
+Neste regime, ambos os esquemas numéricos apresentam resultados semelhantes, uma vez que os efeitos dissipativos naturais contribuem para estabilizar a solução.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Gráficos/upwind.png}
+    \caption{Evolução temporal da solução para um regime dominado pela difusão.}
+\end{figure}
+
+\subsection{Regime Intermédio}
+
+Para valores intermédios do número de Péclet $(Pe \approx 1)$, os efeitos de advecção e difusão tornam-se comparáveis.
+
+O perfil desloca-se ao longo do domínio devido ao transporte advectivo, enquanto simultaneamente sofre espalhamento provocado pela difusão.
+
+Neste caso, começam a surgir diferenças mais evidentes entre os esquemas utilizados, particularmente ao nível da dissipação numérica introduzida pelo método upwind.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Gráficos/comparacao_final.png}
+    \caption{Comparação entre os esquemas centrado e upwind para um regime intermédio.}
+\end{figure}
+
+\subsection{Regime Dominado pela Advecção}
+
+Quando o número de Péclet assume valores elevados $(Pe \gg 1)$, o transporte advectivo torna-se dominante.
+
+O esquema centrado apresenta tendência para gerar oscilações numéricas próximas das regiões de maior gradiente, podendo conduzir a instabilidades na solução.
+
+Por outro lado, o esquema upwind mantém estabilidade numérica, embora à custa da introdução de difusão numérica artificial, responsável pelo alisamento do perfil.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Gráficos/centrado.png}
+    \caption{Comportamento dos esquemas numéricos num regime dominado pela advecção.}
+\end{figure}
+
+\subsection{Difusão Numérica}
+
+A difusão numérica corresponde a um efeito artificial introduzido pelo método numérico, particularmente evidente no esquema upwind.
+
+Este fenómeno provoca um espalhamento adicional da solução, semelhante ao efeito físico da difusão, mesmo quando o coeficiente difusivo é reduzido.
+
+A análise deste comportamento constitui um dos aspetos centrais do presente trabalho, permitindo compreender o compromisso entre estabilidade e precisão nos diferentes esquemas numéricos.
+
+\subsection{Comparação entre Esquemas Numéricos}
+
+Para analisar o comportamento dos diferentes métodos numéricos, foram comparados os esquemas centrado e upwind para a mesma condição inicial e parâmetros físicos.
+
+O esquema upwind apresentou maior estabilidade numérica, embora introduzindo um alisamento progressivo da solução devido à difusão numérica artificial.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Gráficos/upwind.png}
+    \caption{Evolução temporal da solução utilizando o esquema upwind.}
+\end{figure}
+
+Por outro lado, o esquema centrado preservou melhor os gradientes espaciais da solução, mas revelou tendência para o aparecimento de oscilações numéricas em regiões de elevada variação espacial.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Gráficos/centrado.png}
+    \caption{Evolução temporal da solução utilizando o esquema centrado.}
+\end{figure}
+
+A comparação final entre os dois métodos evidencia claramente o compromisso entre estabilidade e precisão.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Gráficos/comparacao_final.png}
+    \caption{Comparação final entre os esquemas centrado e upwind.}
+\end{figure}
+\section{Conclusão}
+
+Neste trabalho foi estudada numericamente a equação de advecção--difusão unidimensional utilizando diferentes esquemas de diferenças finitas.
+
+Foram analisados os efeitos da advecção e da difusão na evolução temporal de um perfil Gaussiano inicial, bem como a influência do número de Péclet nos diferentes regimes físicos do sistema.
+
+A comparação entre os esquemas centrado e upwind permitiu observar diferenças importantes ao nível da estabilidade e precisão numérica.
+
+O esquema centrado apresentou maior precisão espacial, mas revelou tendência para desenvolver oscilações numéricas em regimes dominados pela advecção.
+
+Por outro lado, o esquema upwind demonstrou maior robustez e estabilidade, embora introduzindo difusão numérica artificial responsável pelo alisamento progressivo da solução.
+
+Os resultados obtidos evidenciam a importância da escolha adequada do método numérico na resolução de equações diferenciais parciais, particularmente em problemas onde coexistem mecanismos de transporte e dissipação.
+
+Este trabalho permitiu aprofundar conceitos fundamentais de métodos numéricos aplicados à física computacional, incluindo discretização de equações diferenciais parciais, estabilidade numérica e análise de erros computacionais.
+
+Como possível desenvolvimento futuro, poderá ser explorada a utilização de métodos mais avançados, incluindo esquemas de ordem superior ou abordagens baseadas em inteligência artificial, como Physics-Informed Neural Networks (PINNs).
+
+\end{document}
