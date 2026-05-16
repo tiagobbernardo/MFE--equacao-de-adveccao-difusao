@@ -18,13 +18,13 @@ Projeto desenvolvido no âmbito da unidade curricular de Modelação em Física 
 
 A equação considerada é:
 
-\[
+```math
 \frac{\partial u}{\partial t}
 +
 v\frac{\partial u}{\partial x}
 =
 D\frac{\partial^2u}{\partial x^2}
-\]
+```
 
 onde:
 
