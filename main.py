@@ -1,8 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from mpl_toolkits.mplot3d import Axes3D
 
 # =========================================================
-# DOMÍNIO NUMÉRICO (fixo para todos os casos)
+# DOMÍNIO NUMÉRICO
 # =========================================================
 
 L = 1.0
@@ -13,11 +15,10 @@ x = np.linspace(0, L, Nx)
 dt = 1e-4
 Nt = 2500
 
-# tempos para guardar solução
 snap_times = np.linspace(0, Nt, 5, dtype=int)
 
 # =========================================================
-# PERFIL INICIAL (fixo)
+# PERFIL INICIAL
 # =========================================================
 
 x0 = 0.3
@@ -25,13 +26,16 @@ sigma = 0.05
 u0 = np.exp(-((x - x0)**2) / sigma**2)
 
 # =========================================================
-# SOLVER (upwind + difusão)
+# SOLVER OTIMIZADO (VETORIZADO)
 # =========================================================
 
 def solve(v, D):
 
     u = u0.copy()
     snapshots = []
+
+    C = v * dt / dx
+    r = D * dt / dx**2
 
     for n in range(Nt + 1):
 
@@ -40,26 +44,28 @@ def solve(v, D):
 
         u_new = u.copy()
 
-        for i in range(1, Nx - 1):
+        # vetorização (remove loop i)
+        u_center = u[1:-1]
+        u_left = u[:-2]
+        u_right = u[2:]
 
-            C = v * dt / dx
+        adv = (
+            -0.5 * C * (u_right - u_left)
+            + 0.5 * C**2 * (u_right - 2*u_center + u_left)
+        )
 
-            adv = (
-                -0.5 * C * (u[i+1] - u[i-1])
-                + 0.5 * C**2 * (u[i+1] - 2*u[i] + u[i-1])
-            )
+        diff = r * (u_right - 2*u_center + u_left)
 
-            diff = D * dt / dx**2 * (u[i+1] - 2*u[i] + u[i-1])
-
-            u_new[i] = u[i] + adv + diff
-
-            diff = D * dt / dx**2 * (u[i + 1] - 2*u[i] + u[i - 1])
-
-            u_new[i] = u[i] + adv + diff
+        u_new[1:-1] = u_center + adv + diff
 
         u = u_new
 
     return snapshots, u
+
+
+# =========================================================
+# CASOS
+# =========================================================
 
 cases = {
     "Advecção dominante": (2.0, 1e-5),
@@ -70,14 +76,6 @@ cases = {
 results = {}
 
 for name, (v, D) in cases.items():
-
-    # calcular números adimensionais
-    C = v * dt / dx
-    r = D * dt / dx**2
-
-    print(f"\n{name}")
-    print(f"C (Courant) = {C:.6f}")
-    print(f"r (difusão) = {r:.6f}")
 
     snapshots, u_final = solve(v, D)
     results[name] = (snapshots, u_final)
@@ -93,11 +91,15 @@ for name, (v, D) in cases.items():
     plt.legend()
     plt.grid()
 
-    # 💾 guardar ficheiro
-    filename = name.lower().replace(" ", "_") + ".png"
-    plt.savefig(filename, dpi=300, bbox_inches="tight")
+    plt.savefig(name.lower().replace(" ", "_") + ".png",
+                dpi=300, bbox_inches="tight")
 
     plt.show()
+
+
+# =========================================================
+# COMPARAÇÃO FINAL
+# =========================================================
 
 plt.figure(figsize=(10,6))
 
@@ -110,9 +112,110 @@ plt.ylabel("u(x,t)")
 plt.legend()
 plt.grid()
 
-# 💾 guardar gráfico final
 plt.savefig("comparacao_final.png", dpi=300, bbox_inches="tight")
-
 plt.show()
 
-print("run completed")
+# =========================================================
+# HISTÓRICO (OTIMIZADO PARA ANIMAÇÃO)
+# =========================================================
+
+def solve_history(v, D, skip=5):
+
+    u = u0.copy()
+    history = []
+
+    C = v * dt / dx
+    r = D * dt / dx**2
+
+    for n in range(Nt):
+
+        u_center = u[1:-1]
+        u_left = u[:-2]
+        u_right = u[2:]
+
+        adv = (
+            -0.5 * C * (u_right - u_left)
+            + 0.5 * C**2 * (u_right - 2*u_center + u_left)
+        )
+
+        diff = r * (u_right - 2*u_center + u_left)
+
+        u_new = u.copy()
+        u_new[1:-1] = u_center + adv + diff
+        u = u_new
+
+        # guarda apenas alguns frames (CRÍTICO)
+        if n % skip == 0:
+            history.append(u.copy())
+
+    return np.array(history)
+
+
+history = solve_history(v=2.0, D=1e-5, skip=5)
+
+
+# espaço 2D
+plt.figure(figsize=(8,5))
+plt.imshow(history, aspect='auto', extent=[0,1,0,len(history)*dt*5], origin='lower')
+plt.colorbar(label="u(x,t)")
+plt.xlabel("x")
+plt.ylabel("t")
+plt.title("Equilibrado")
+plt.savefig("Equilibrado_espaço-tempo.png", dpi=300, bbox_inches="tight")
+plt.show()
+
+# Mesh 3D
+T = np.arange(len(history)) * dt * 5
+X, Tgrid = np.meshgrid(x, T)
+
+fig = plt.figure(figsize=(10,6))
+ax = fig.add_subplot(111, projection='3d')
+
+ax.plot_surface(X, Tgrid, history, cmap='viridis')
+ax.set_xlabel("x")
+ax.set_ylabel("t")
+ax.set_zlabel("u")
+plt.savefig("Mesh_3D.png", dpi=300, bbox_inches="tight")
+plt.show()
+
+"""
+# =========================================================
+# ANIMAÇÃO LEVE
+# =========================================================
+
+fig, ax = plt.subplots(figsize=(8,5))
+
+line, = ax.plot(x, history[0])
+
+ax.set_xlim(0, 1)
+ax.set_ylim(0, 1.1)
+
+ax.set_xlabel("x")
+ax.set_ylabel("u")
+
+title = ax.set_title("")
+
+def update(frame):
+    line.set_ydata(history[frame])
+    title.set_text(f"t = {frame * dt * 5:.4f} s")  # skip=5
+    return line,
+
+ani = FuncAnimation(
+    fig,
+    update,
+    frames=len(history),
+    interval=15,
+    blit=True
+)
+
+ani.save(
+    "equilibrado_dominante.gif",
+    writer="pillow",
+    fps=30
+)
+
+plt.close()
+
+print("GIF criado com sucesso!")
+
+"""
