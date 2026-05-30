@@ -151,7 +151,7 @@ def solve_history(v, D, skip=5):
     return np.array(history)
 
 
-history = solve_history(v=2.0, D=1e-5, skip=5)
+history = solve_history(v=1.0, D=5e-3, skip=5)
 
 
 # espaço 2D
@@ -164,6 +164,7 @@ plt.title("Equilibrado")
 plt.savefig("Equilibrado_espaço-tempo.png", dpi=300, bbox_inches="tight")
 plt.show()
 
+"""
 # Mesh 3D
 T = np.arange(len(history)) * dt * 5
 X, Tgrid = np.meshgrid(x, T)
@@ -178,7 +179,6 @@ ax.set_zlabel("u")
 plt.savefig("Mesh_3D.png", dpi=300, bbox_inches="tight")
 plt.show()
 
-"""
 # =========================================================
 # ANIMAÇÃO LEVE
 # =========================================================
