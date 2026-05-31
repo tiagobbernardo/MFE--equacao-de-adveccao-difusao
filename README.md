@@ -2,67 +2,69 @@
 
 Este repositório contém a simulação numérica da equação de advecção–difusão unidimensional utilizando métodos de diferenças finitas.
 
-O objetivo principal é estudar a evolução de um perfil inicial Gaussiano sob diferentes regimes físicos, caracterizados pelo número de Péclet, e comparar diferentes esquemas numéricos.
+O objetivo é estudar a evolução de um perfil Gaussiano em diferentes regimes físicos e comparar esquemas numéricos.
 
 ---
 
-## 📌 Objetivos do projeto
+## 📌 Objetivos
 
 - Resolver numericamente a equação de advecção–difusão 1D
-- Analisar três regimes físicos:
+- Analisar regimes físicos diferentes:
   - Advecção dominante
   - Difusão dominante
   - Regime equilibrado
-- Estudar o efeito do número de Péclet
-- Comparar esquemas numéricos:
+- Estudar o número de Péclet
+- Comparar esquemas:
   - Upwind
   - Lax–Wendroff
 - Avaliar estabilidade e difusão numérica
-- Gerar gráficos 1D, 2D, 3D e animações (GIF)
+- Gerar gráficos 1D, 2D, 3D e animações
 
 ---
 
 ## 🧮 Equação governante
 
-\[
+$$
 \frac{\partial u}{\partial t}
-+
-v \frac{\partial u}{\partial x}
-=
-D \frac{\partial^2 u}{\partial x^2}
-\]
++ v \frac{\partial u}{\partial x}
+= D \frac{\partial^2 u}{\partial x^2}
+$$
 
 Onde:
-- \(u(x,t)\): variável transportada  
-- \(v\): velocidade de advecção  
-- \(D\): coeficiente de difusão  
+- $u(x,t)$ → variável transportada  
+- $v$ → velocidade de advecção  
+- $D$ → coeficiente de difusão  
 
 ---
 
 ## 📊 Parâmetros adimensionais
 
-- Número de Courant:
-\[
+$$
 C = \frac{v \Delta t}{\Delta x}
-\]
+$$
 
-- Parâmetro difusivo:
-\[
+$$
 r = \frac{D \Delta t}{(\Delta x)^2}
-\]
+$$
 
-- Número de Péclet:
-\[
+$$
 Pe = \frac{vL}{D}
-\]
+$$
 
 ---
 
 ## 📁 Estrutura do repositório
-'''
-adadadadad
-adadadadasdfe
-'''
+```
+MFE--equacao-de-adveccao-difusao/
+│
+├── main.py  
+├── README.md  
+│
+├── 1D graphics/
+├── 2D graphics/
+├── 3D graphics/
+├── animations/
+```
 
 
 ---
@@ -90,9 +92,11 @@ Método de segunda ordem mais preciso, reduzindo a difusão numérica.
 ## 🎞️ Animações
 
 As animações da evolução temporal podem ser encontradas na pasta:
-'''
-/animations
-'''
+```
+MFE--equacao-de-adveccao-difusao/
+│
+├── animations/
+```
 
 Exemplos:
 - Advecção dominante
