@@ -25,9 +25,7 @@ O objetivo é estudar a evolução de um perfil Gaussiano em diferentes regimes 
 ## 🧮 Equação governante
 
 $$
-\frac{\partial u}{\partial t}
-+ v \frac{\partial u}{\partial x}
-= D \frac{\partial^2 u}{\partial x^2}
+\frac{\partial u}{\partial t} + v \frac{\partial u}{\partial x} = D \frac{\partial^2 u}{\partial x^2}
 $$
 
 Onde:
