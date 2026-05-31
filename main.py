@@ -37,6 +37,10 @@ def solve(v, D):
     C = v * dt / dx
     r = D * dt / dx**2
 
+    print(f"\n{name}") 
+    print(f"C (Courant) = {C:.6f}") 
+    print(f"r (difusão) = {r:.6f}")
+
     for n in range(Nt + 1):
 
         if n in snap_times:
@@ -149,7 +153,6 @@ def solve_history(v, D, skip=5):
             history.append(u.copy())
 
     return np.array(history)
-
 
 history = solve_history(v=1.0, D=5e-3, skip=5)
 

@@ -1,88 +1,138 @@
-# Equação de Advecção–Difusão
+# 🌊 Advection–Diffusion Equation Simulation
 
-Projeto desenvolvido no âmbito da unidade curricular de Modelação em Física e Engenharia, com o objetivo de estudar numericamente a equação de advecção–difusão unidimensional através de métodos de diferenças finitas.
+Este repositório contém a simulação numérica da equação de advecção–difusão unidimensional utilizando métodos de diferenças finitas.
 
-## Objetivos
-
-- Simular numericamente a equação de advecção–difusão;
-- Analisar diferentes regimes físicos:
-  - Advecção dominante;
-  - Difusão dominante;
-  - Regime equilibrado;
-- Comparar diferentes esquemas numéricos;
-- Estudar estabilidade numérica e difusão numérica artificial.
+O objetivo principal é estudar a evolução de um perfil inicial Gaussiano sob diferentes regimes físicos, caracterizados pelo número de Péclet, e comparar diferentes esquemas numéricos.
 
 ---
 
-## Equação estudada
+## 📌 Objetivos do projeto
 
-A equação considerada é:
+- Resolver numericamente a equação de advecção–difusão 1D
+- Analisar três regimes físicos:
+  - Advecção dominante
+  - Difusão dominante
+  - Regime equilibrado
+- Estudar o efeito do número de Péclet
+- Comparar esquemas numéricos:
+  - Upwind
+  - Lax–Wendroff
+- Avaliar estabilidade e difusão numérica
+- Gerar gráficos 1D, 2D, 3D e animações (GIF)
 
-```math
+---
+
+## 🧮 Equação governante
+
+\[
 \frac{\partial u}{\partial t}
 +
-v\frac{\partial u}{\partial x}
+v \frac{\partial u}{\partial x}
 =
-D\frac{\partial^2u}{\partial x^2}
-```
+D \frac{\partial^2 u}{\partial x^2}
+\]
 
-onde:
-
-- \(u(x,t)\) representa a quantidade transportada;
-- \(v\) é a velocidade de advecção;
-- \(D\) é o coeficiente de difusão.
-
----
-
-## Métodos Numéricos
-
-O projeto utiliza:
-
-- Método de Euler explícito para discretização temporal;
-- Diferenças centradas para o termo difusivo;
-- Esquema de Lax–Wendroff para o termo advectivo.
-
-Inicialmente foi utilizado o esquema upwind, mas este introduzia difusão numérica significativa em regimes dominados pela advecção. O método de Lax–Wendroff permitiu melhorar a preservação da amplitude e forma do perfil Gaussiano.
+Onde:
+- \(u(x,t)\): variável transportada  
+- \(v\): velocidade de advecção  
+- \(D\): coeficiente de difusão  
 
 ---
 
-## Estrutura do Projeto
+## 📊 Parâmetros adimensionais
 
-```text
-.
-├── main.py
-├── README.md
-├── Relatorio/
-│   └── relatorio.tex
-├── Graficos/
-│   ├── adveccao_dominante.png
-│   ├── difusao_dominante.png
-│   ├── equilibrado.png
-│   └── comparacao_final.png
-```
+- Número de Courant:
+\[
+C = \frac{v \Delta t}{\Delta x}
+\]
 
----
+- Parâmetro difusivo:
+\[
+r = \frac{D \Delta t}{(\Delta x)^2}
+\]
 
-## Resultados
-
-As simulações permitem observar:
-
-- Transporte do perfil Gaussiano em regimes advectivos;
-- Espalhamento progressivo em regimes difusivos;
-- Competição entre advecção e difusão em regimes equilibrados;
-- Influência da difusão numérica nos diferentes métodos.
+- Número de Péclet:
+\[
+Pe = \frac{vL}{D}
+\]
 
 ---
 
-## Tecnologias Utilizadas
+## 📁 Estrutura do repositório
+'''
+adadadadad
+adadadadasdfe
+'''
 
-- Python
-- NumPy
-- Matplotlib
 
 ---
 
-## Autores
+## ⚙️ Métodos numéricos
 
-- Tiago Bernardo
-- Gabriel Marques
+### 🔹 Upwind
+Método robusto, mas introduz difusão numérica artificial.
+
+### 🔹 Lax–Wendroff
+Método de segunda ordem mais preciso, reduzindo a difusão numérica.
+
+---
+
+## 📌 Regimes estudados
+
+| Regime | v | D | Pe |
+|--------|---|---|----|
+| Advecção dominante | 2.0 | 1e-5 | 200000 |
+| Equilibrado | 1.0 | 5e-3 | 200 |
+| Difusão dominante | 0.05 | 1e-2 | 5 |
+
+---
+
+## 🎞️ Animações
+
+As animações da evolução temporal podem ser encontradas na pasta:
+'''
+/animations
+'''
+
+Exemplos:
+- Advecção dominante
+- Difusão dominante
+- Regime equilibrado
+
+---
+
+## 📈 Resultados
+
+O projeto permite observar:
+
+- Transporte de perfis Gaussianos
+- Espalhamento por difusão
+- Dissipação numérica em esquemas discretos
+- Influência direta do número de Péclet
+
+---
+
+## 🧠 Conclusões
+
+- O número de Péclet controla o regime físico dominante
+- Upwind é estável mas difusivo
+- Lax–Wendroff melhora significativamente a precisão
+- A escolha do esquema numérico influencia fortemente a solução
+
+---
+
+## 🚀 Possíveis melhorias futuras
+
+- Extensão para 2D/3D completo
+- Implementação de esquemas implícitos
+- Análise de erro quantitativo
+- Implementação de condições de fronteira não homogéneas
+
+---
+
+## 👨‍💻 Autor
+
+Tiago Bernardo  
+Gabriel Marques  
+
+Projeto académico – Equação de Advecção–Difusão (Física/Engenharia)
