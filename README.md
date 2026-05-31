@@ -134,9 +134,7 @@ O projeto permite observar:
 
 ---
 
-## 👨‍💻 Autor
+## 👨‍💻 Autores
 
-Tiago Bernardo  
-Gabriel Marques  
-
-Projeto académico – Equação de Advecção–Difusão (Física/Engenharia)
+Tiago Bernardo - 53117  
+Gabriel Marques - 53087
