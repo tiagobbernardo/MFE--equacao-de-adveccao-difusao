@@ -1,4 +1,4 @@
-# 🌊 Advection–Diffusion Equation Simulation
+# Advection–Diffusion Equation Simulation
 
 Este repositório contém a simulação numérica da equação de advecção–difusão unidimensional utilizando métodos de diferenças finitas.
 
@@ -6,7 +6,7 @@ O objetivo é estudar a evolução de um perfil Gaussiano em diferentes regimes 
 
 ---
 
-## 📌 Objetivos
+## Objetivos
 
 - Resolver numericamente a equação de advecção–difusão 1D
 - Analisar regimes físicos diferentes:
@@ -22,7 +22,7 @@ O objetivo é estudar a evolução de um perfil Gaussiano em diferentes regimes 
 
 ---
 
-## 🧮 Equação governante
+## Equação governante
 
 $$
 \frac{\partial u}{\partial t} + v \frac{\partial u}{\partial x} = D \frac{\partial^2 u}{\partial x^2}
@@ -35,7 +35,7 @@ Onde:
 
 ---
 
-## 📊 Parâmetros adimensionais
+## Parâmetros adimensionais
 
 $$
 C = \frac{v \Delta t}{\Delta x}
@@ -51,7 +51,7 @@ $$
 
 ---
 
-## 📁 Estrutura do repositório
+## Estrutura do repositório
 ```
 MFE--equacao-de-adveccao-difusao/
 │
@@ -67,7 +67,7 @@ MFE--equacao-de-adveccao-difusao/
 
 ---
 
-## ⚙️ Métodos numéricos
+## Métodos numéricos
 
 ### 🔹 Upwind
 Método robusto, mas introduz difusão numérica artificial.
@@ -77,7 +77,7 @@ Método de segunda ordem mais preciso, reduzindo a difusão numérica.
 
 ---
 
-## 📌 Regimes estudados
+## Regimes estudados
 
 | Regime | v | D | Pe |
 |--------|---|---|----|
@@ -87,7 +87,7 @@ Método de segunda ordem mais preciso, reduzindo a difusão numérica.
 
 ---
 
-## 🎞️ Animações
+## Animações
 
 As animações da evolução temporal podem ser encontradas na pasta:
 ```
@@ -103,7 +103,7 @@ Exemplos:
 
 ---
 
-## 📈 Resultados
+## Resultados
 
 O projeto permite observar:
 
@@ -114,21 +114,12 @@ O projeto permite observar:
 
 ---
 
-## 🧠 Conclusões
+## Conclusões
 
 - O número de Péclet controla o regime físico dominante
 - Upwind é estável mas difusivo
 - Lax–Wendroff melhora significativamente a precisão
 - A escolha do esquema numérico influencia fortemente a solução
-
----
-
-## 🚀 Possíveis melhorias futuras
-
-- Extensão para 2D/3D completo
-- Implementação de esquemas implícitos
-- Análise de erro quantitativo
-- Implementação de condições de fronteira não homogéneas
 
 ---
 
