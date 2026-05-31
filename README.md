@@ -1,4 +1,4 @@
-# Advection–Diffusion Equation Simulation
+# Equação de advecção–difusão
 
 Este repositório contém a simulação numérica da equação de advecção–difusão unidimensional utilizando métodos de diferenças finitas.
 
