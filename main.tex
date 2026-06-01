@@ -1,0 +1,288 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+
+\title{\textbf{Equação de Advecção-Difusão}\\
+Modelação em Física e Engenharia}
+
+\author{Tiago Bernardo - 53117 \and Gabriel Marques - 53087}
+
+\date{Maio 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Introdução}
+
+A equação de advecção--difusão constitui uma das equações diferenciais parciais fundamentais na modelação de fenómenos de transporte em Física e Engenharia.
+
+Esta equação descreve a evolução temporal e espacial de uma grandeza sujeita simultaneamente a transporte por advecção e a processos de difusão.
+
+O objetivo deste trabalho consiste na resolução numérica da equação de advecção--difusão unidimensional através do método das diferenças finitas, estudando a evolução de um perfil inicial Gaussiano em diferentes regimes físicos caracterizados pelo número de Péclet.
+
+Adicionalmente, pretende-se comparar os esquemas numéricos Upwind e Lax--Wendroff, analisando estabilidade, precisão e difusão numérica.
+
+\section{Fundamentos Teóricos}
+
+A equação de advecção--difusão unidimensional é dada por:
+
+\[
+\frac{\partial u}{\partial t}
++
+v \frac{\partial u}{\partial x}
+=
+D \frac{\partial^2 u}{\partial x^2}.
+\]
+
+O termo advectivo está associado ao transporte da solução, enquanto o termo difusivo representa o seu espalhamento.
+
+Os parâmetros adimensionais utilizados são:
+
+\[
+C = \frac{v \Delta t}{\Delta x},
+\]
+
+\[
+r = \frac{D \Delta t}{(\Delta x)^2}.
+\]
+
+O número de Péclet define a razão entre advecção e difusão:
+
+\[
+Pe = \frac{v L}{D}.
+\]
+
+Valores elevados de \(Pe\) indicam regime dominado pela advecção, enquanto valores reduzidos indicam domínio da difusão.
+
+Como condição inicial foi utilizado um perfil Gaussiano:
+
+\[
+u(x,0) = \exp\left(-\frac{(x - x_0)^2}{\sigma^2}\right).
+\]
+
+\section{Métodos Numéricos}
+
+A discretização temporal foi feita pelo método de Euler explícito:
+
+\[
+\frac{\partial u}{\partial t}
+\approx
+\frac{u_i^{n+1} - u_i^n}{\Delta t}.
+\]
+
+O termo difusivo foi discretizado por diferenças centradas:
+
+\[
+\frac{\partial^2 u}{\partial x^2}
+\approx
+\frac{u_{i+1}^n - 2u_i^n + u_{i-1}^n}{(\Delta x)^2}.
+\]
+
+Foram usadas condições de fronteira de Dirichlet homogéneas:
+
+\[
+u(0,t) = 0, \quad u(L,t) = 0.
+\]
+
+\subsection{Esquema Upwind}
+
+O esquema Upwind utiliza:
+
+\[
+\frac{\partial u}{\partial x}
+\approx
+\frac{u_i^n - u_{i-1}^n}{\Delta x}.
+\]
+
+Este esquema é robusto e estável, mas introduz difusão numérica artificial, reduzindo a precisão em regimes dominados pela advecção.
+
+\subsection{Esquema de Lax--Wendroff}
+
+O esquema de Lax--Wendroff é dado por:
+
+\[
+u_i^{n+1}
+=
+u_i^n
+-
+\frac{C}{2} \left(u_{i+1}^n - u_{i-1}^n\right)
++
+\frac{C^2}{2} \left(u_{i+1}^n - 2u_i^n + u_{i-1}^n\right)
++
+r \left(u_{i+1}^n - 2u_i^n + u_{i-1}^n\right).
+\]
+
+Este método apresenta maior precisão e menor difusão numérica.
+
+\subsection{Estabilidade Numérica}
+
+A estabilidade da solução requer:
+
+\[
+C \le 1,
+\qquad
+r \le \frac{1}{2}.
+\]
+
+Todos os casos estudados respeitam estas condições.
+
+\section{Resultados Numéricos}
+
+Foram estudados três regimes físicos distintos:
+
+\begin{itemize}
+\item Advecção dominante;
+\item Difusão dominante;
+\item Regime equilibrado.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{parametros.png}
+\caption{Parâmetros adimensionais utilizados nas simulações.}
+\end{figure}
+
+\subsection{Número de Péclet}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccc}
+\hline
+Regime & $v$ & $D$ & $Pe$ \\
+\hline
+Advecção dominante & 2.0 & $10^{-5}$ & 200000 \\
+Equilibrado & 1.0 & $5 \times 10^{-3}$ & 200 \\
+Difusão dominante & 0.05 & $10^{-2}$ & 5 \\
+\hline
+\end{tabular}
+\caption{Número de Péclet nos diferentes regimes estudados.}
+\end{table}
+
+\subsection{Comparação entre esquemas numéricos}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Gráficos/advecção_dominante_upwind.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Gráficos/advecção_dominante.png}
+\end{minipage}
+
+\caption{Comparação entre os esquemas Upwind (esquerda) e Lax--Wendroff (direita) no regime advectivo.}
+\end{figure}
+
+O esquema Upwind apresenta maior difusão numérica, conduzindo a perda de amplitude e suavização do perfil. O esquema de Lax--Wendroff preserva melhor a forma da solução e apresenta maior precisão.
+
+\subsection{Regime dominado pela advecção}
+
+Neste regime observa-se transporte dominante do perfil Gaussiano.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{Gráficos/advecção_dominante.png}
+\caption{Regime dominado pela advecção.}
+\end{figure}
+
+\subsection{Regime dominado pela difusão}
+
+Neste caso verifica-se alargamento progressivo do perfil e redução da amplitude máxima.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{Gráficos/difusão_dominante.png}
+\caption{Regime dominado pela difusão.}
+\end{figure}
+
+\subsection{Regime equilibrado}
+
+Observa-se coexistência entre transporte e difusão.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{Gráficos/equilibrado.png}
+\caption{Regime equilibrado.}
+\end{figure}
+
+\subsection{Comparação final}
+
+A análise global evidencia a influência do número de Péclet na dinâmica do sistema. Para valores elevados domina o transporte, enquanto para valores reduzidos domina a difusão.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{Gráficos/comparacao_final.png}
+\caption{Comparação final entre os diferentes regimes físicos.}
+\end{figure}
+
+\section{Conclusão}
+
+Neste trabalho foi estudada numericamente a equação de advecção--difusão unidimensional.
+
+Os resultados obtidos demonstram a forte influência do número de Péclet na evolução da solução, permitindo distinguir claramente regimes dominados por advecção e por difusão.
+
+A comparação entre os esquemas numéricos evidenciou diferenças importantes em termos de precisão e difusão numérica. O esquema Upwind é mais estável, mas menos preciso, enquanto o esquema de Lax--Wendroff apresenta melhor preservação da solução.
+
+Os resultados são consistentes com o comportamento físico esperado.
+
+\newpage
+\section*{Anexos}
+
+\addcontentsline{toc}{section}{Anexos}
+
+Nesta secção apresentam-se representações adicionais da solução numérica obtida para diferentes regimes físicos da equação de advecção--difusão.
+
+\subsection*{Representações bidimensionais (2D)}
+
+\subsubsection*{Regime dominado pela advecção}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Gráficos/adveccao_espaço-tempo.png}
+\caption{Representação 2D da evolução no regime dominado pela advecção.}
+\end{figure}
+
+\subsubsection*{Regime dominado pela difusão}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Gráficos/Difusao_espaço-tempo.png}
+\caption{Representação 2D da evolução no regime dominado pela difusão.}
+\end{figure}
+
+\subsubsection*{Regime equilibrado}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Gráficos/Equilibrado_espaço-tempo.png}
+\caption{Representação 2D da evolução no regime equilibrado.}
+\end{figure}
+
+\subsection*{Representação tridimensional (3D)}
+
+\subsubsection*{Regime dominado pela advecção}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Gráficos/Advecção_Mesh_3D.png}
+\caption{Representação tridimensional da solução no regime dominado pela advecção.}
+\end{figure}
+
+\subsection*{Animações da simulação}
+
+\begin{itemize}
+\item \href{https://github.com/tiagobbernardo/MFE--equacao-de-adveccao-difusao/blob/7307a46e6ba824f2dffa17b3ad4cd375a18a2eb9/animations/adveccao_dominante.gif}{Regime advectivo (GIF)}
+\item \href{https://github.com/tiagobbernardo/MFE--equacao-de-adveccao-difusao/blob/7307a46e6ba824f2dffa17b3ad4cd375a18a2eb9/animations/Difusao_dominante.gif}{Regime difusivo (GIF)}
+\item \href{https://github.com/tiagobbernardo/MFE--equacao-de-adveccao-difusao/blob/7307a46e6ba824f2dffa17b3ad4cd375a18a2eb9/animations/equilibrado.gif}{Regime equilibrado (GIF)}
+\end{itemize}
+
+\end{document}
