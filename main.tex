@@ -7,18 +7,44 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{hyperref}
-
-\title{\textbf{Equação de Advecção-Difusão}\\
-Modelação em Física e Engenharia}
-
-\author{Tiago Bernardo - 53117 \and Gabriel Marques - 53087}
-
-\date{Maio 2026}
+\usepackage{caption}
+\captionsetup{skip=3pt}
 
 \begin{document}
 
-\maketitle
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+% Logo
+\includegraphics[width=0.8\textwidth]{isel_logo.png}
 
+{\Large Instituto Superior de Engenharia de Lisboa \par}
+
+\vspace{0.6cm}
+
+{\LARGE \textbf{Equação de Advecção-Difusão} \par}
+\vspace{0.2cm}
+{\large Modelação em Física e Engenharia \par}
+
+\vspace{0.6cm}
+
+{\normalsize Autores: \par}
+{\normalsize Tiago Bernardo - 53117 \par}
+{\normalsize Gabriel Marques - 53087 \par}
+\vspace{0.2cm}
+{\normalsize Docente: \par}
+{\normalsize Prof. Doutor Pedro Patrício \par}
+
+\vspace{0.8cm}
+
+% TOC compacto
+{\small
+\tableofcontents
+}
+\vfill
+{\small Maio 2026 \par}
+\end{titlepage}
+\newpage
 \section{Introdução}
 
 A equação de advecção--difusão constitui uma das equações diferenciais parciais fundamentais na modelação de fenómenos de transporte em Física e Engenharia.
@@ -27,12 +53,9 @@ Esta equação descreve a evolução temporal e espacial de uma grandeza sujeita
 
 O objetivo deste trabalho consiste na resolução numérica da equação de advecção--difusão unidimensional através do método das diferenças finitas, estudando a evolução de um perfil inicial Gaussiano em diferentes regimes físicos caracterizados pelo número de Péclet.
 
-Adicionalmente, pretende-se comparar os esquemas numéricos Upwind e Lax--Wendroff, analisando estabilidade, precisão e difusão numérica.
-
 \section{Fundamentos Teóricos}
 
 A equação de advecção--difusão unidimensional é dada por:
-
 \[
 \frac{\partial u}{\partial t}
 +
@@ -41,28 +64,12 @@ v \frac{\partial u}{\partial x}
 D \frac{\partial^2 u}{\partial x^2}.
 \]
 
-O termo advectivo está associado ao transporte da solução, enquanto o termo difusivo representa o seu espalhamento.
-
-Os parâmetros adimensionais utilizados são:
-
+O termo advectivo está associado ao transporte da solução, enquanto o termo difusivo representa o seu espalhamento. Os parâmetros adimensionais utilizados e o número de Péclet, que define a razão entre advecção e difusão são, respetivamente:
 \[
-C = \frac{v \Delta t}{\Delta x},
+C = \frac{v \Delta t}{\Delta x},\qquad r = \frac{D \Delta t}{(\Delta x)^2},\qquad Pe = \frac{v L}{D}.
 \]
 
-\[
-r = \frac{D \Delta t}{(\Delta x)^2}.
-\]
-
-O número de Péclet define a razão entre advecção e difusão:
-
-\[
-Pe = \frac{v L}{D}.
-\]
-
-Valores elevados de \(Pe\) indicam regime dominado pela advecção, enquanto valores reduzidos indicam domínio da difusão.
-
-Como condição inicial foi utilizado um perfil Gaussiano:
-
+Valores elevados de \(Pe\) indicam regime dominado pela advecção, enquanto valores reduzidos indicam domínio da difusão. Como condição inicial foi utilizado um perfil Gaussiano:
 \[
 u(x,0) = \exp\left(-\frac{(x - x_0)^2}{\sigma^2}\right).
 \]
@@ -70,7 +77,6 @@ u(x,0) = \exp\left(-\frac{(x - x_0)^2}{\sigma^2}\right).
 \section{Métodos Numéricos}
 
 A discretização temporal foi feita pelo método de Euler explícito:
-
 \[
 \frac{\partial u}{\partial t}
 \approx
@@ -78,23 +84,61 @@ A discretização temporal foi feita pelo método de Euler explícito:
 \]
 
 O termo difusivo foi discretizado por diferenças centradas:
-
 \[
 \frac{\partial^2 u}{\partial x^2}
 \approx
 \frac{u_{i+1}^n - 2u_i^n + u_{i-1}^n}{(\Delta x)^2}.
 \]
 
-Foram usadas condições de fronteira de Dirichlet homogéneas:
+\subsection{Discretização do domínio e condições de fronteira}
 
+O domínio espacial considerado foi:
+\[
+0 \le x \le L, \qquad L = 1.
+\]
+
+Para \(N_x = 200\) pontos no espaço, o passo espacial é dado por:
+\[
+\Delta x = \frac{L}{N_x - 1}
+= \frac{1}{199}
+\approx 5{,}025 \times 10^{-3}.
+\]
+
+Este valor foi escolhido para representar adequadamente o perfil Gaussiano inicial. Como \(\sigma = 0{,}05\), obtém-se:
+\[
+\frac{\sigma}{\Delta x}
+\approx
+\frac{0{,}05}{0{,}005025}
+\approx 9{,}95.
+\]
+
+Assim, a largura característica da Gaussiana tem cerca de 10 pontos por \(\sigma\) (20 pontos em \(2\sigma\)). Isto garante uma resolução espacial adequada do perfil inicial, evitando uma discrepância anómala. O passo temporal utilizado foi:
+\[
+\Delta t = 10^{-4}.
+\]
+
+Como foram realizadas \(N_t = 2500\) iterações, o tempo final da simulação é:
+\[
+T_{\text{final}} = N_t \Delta t = 2500 \times 10^{-4} = 0{,}25.
+\]
+
+Este passo temporal conservador garantiu que os números de estabilidade \(C\) e \(r\) ficassem abaixo dos limites críticos. Foram consideradas condições de fronteira de Dirichlet homogéneas:
 \[
 u(0,t) = 0, \quad u(L,t) = 0.
 \]
 
+Na implementação numérica, apenas os pontos interiores \(i = 1, \ldots, N_x - 2\) são atualizados, mantendo-se as fronteiras fixas. Como o perfil inicial está centrado em \(x_0 = 0{,}3\) e \(\sigma = 0{,}05\), os valores nas fronteiras são praticamente nulos:
+\[
+u(0,0) = e^{-36} \approx 2{,}32 \times 10^{-16},
+\qquad
+u(1,0) = e^{-196} \approx 7{,}56 \times 10^{-86}.
+\]
+
+Desta forma, impõe-se efetivamente \(u=0\) nas fronteiras, representando um domínio fechado e reduzindo a influência numérica das extremidades.
+
 \subsection{Esquema Upwind}
 
 O esquema Upwind utiliza:
-
 \[
 \frac{\partial u}{\partial x}
 \approx
@@ -106,7 +150,6 @@ Este esquema é robusto e estável, mas introduz difusão numérica artificial, 
 \subsection{Esquema de Lax--Wendroff}
 
 O esquema de Lax--Wendroff é dado por:
-
 \[
 u_i^{n+1}
 =
@@ -123,15 +166,59 @@ Este método apresenta maior precisão e menor difusão numérica.
 
 \subsection{Estabilidade Numérica}
 
-A estabilidade da solução requer:
-
+A estabilidade do método explícito depende dos parâmetros \(C\) e \(r\). O número de Courant \(C\), relaciona o deslocamento advectivo por passo temporal com o espaçamento da malha, sendo a condição CFL dada por:
 \[
-C \le 1,
-\qquad
+|C| \le 1.
+\]
+
+O parâmetro \(r\) mede a intensidade da difusão numérica por passo temporal. Para a discretização explícita do termo difusivo, a condição clássica de estabilidade é:
+\[
 r \le \frac{1}{2}.
 \]
 
-Todos os casos estudados respeitam estas condições.
+No esquema de Lax--Wendroff com difusão explícita utilizado, a análise de estabilidade de von Neumann conduz ainda à condição combinada:
+\[
+C^2 + 2r \le 1.
+\]
+
+Para o esquema Upwind com difusão explícita, uma condição prática de estabilidade é:
+\[
+C + 2r \le 1.
+\]
+
+Com \(\Delta x = 1/199\) e \(\Delta t = 10^{-4}\), obtêm-se os seguintes valores:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ccccc}
+\hline
+Regime & $C$ & $r$ & $C^2 + 2r$ & $C + 2r$ \\
+\hline
+Advecção dominante & $0{,}039800$ & $4{,}0 \times 10^{-5}$ & $0{,}001663$ & $0{,}039879$ \\
+Difusão dominante & $0{,}000995$ & $0{,}039601$ & $0{,}079203$ & $0{,}080197$ \\
+Equilibrado & $0{,}019900$ & $0{,}0198005$ & $0{,}039997$ & $0{,}059501$ \\
+\hline
+\end{tabular}
+\caption{Verificação dos critérios de estabilidade numérica para os diferentes regimes.}
+\end{table}
+
+Como \(C<1\) e \(r<1/2\) em todos os casos, e as condições \(C^2+2r\leq1\) e \(C+2r\leq1\) são satisfeitas, \(\Delta t=10^{-4}\) garante estabilidade. O limite advectivo mais restritivo, para \(v=2{,}0\), é aproximadamente:
+
+\[
+\Delta t \le \frac{\Delta x}{v}
+= \frac{0{,}005025}{2{,}0}
+\approx 2{,}51 \times 10^{-3}.
+\]
+
+O limite difusivo mais restritivo, associado ao maior coeficiente de difusão \(D=10^{-2}\), seria aproximadamente:
+
+\[
+\Delta t \le \frac{(\Delta x)^2}{2D}
+= \frac{(0{,}005025)^2}{2 \times 10^{-2}}
+\approx 1{,}26 \times 10^{-3}.
+\]
+
+Como \(10^{-4}\) é bastante inferior a ambos os limites, o passo temporal utilizado evita instabilidades numéricas e permite uma evolução suave da solução.
 
 \section{Resultados Numéricos}
 
@@ -142,12 +229,7 @@ Foram estudados três regimes físicos distintos:
 \item Difusão dominante;
 \item Regime equilibrado.
 \end{itemize}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.4\textwidth]{parametros.png}
-\caption{Parâmetros adimensionais utilizados nas simulações.}
-\end{figure}
+Os parâmetros adimensionais utilizados nas simulações estão presentes na Tabela2.
 
 \subsection{Número de Péclet}
 
@@ -169,49 +251,48 @@ Difusão dominante & 0.05 & $10^{-2}$ & 5 \\
 
 \begin{figure}[H]
 \centering
-\begin{minipage}{0.49\textwidth}
+\begin{minipage}{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{Gráficos/advecção_dominante_upwind.png}
 \end{minipage}
 \hfill
-\begin{minipage}{0.49\textwidth}
+\begin{minipage}{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{Gráficos/advecção_dominante.png}
 \end{minipage}
 
-\caption{Comparação entre os esquemas Upwind (esquerda) e Lax--Wendroff (direita) no regime advectivo.}
+\caption{Esquemas Upwind (esquerda) e Lax--Wendroff (direita).}
 \end{figure}
 
 O esquema Upwind apresenta maior difusão numérica, conduzindo a perda de amplitude e suavização do perfil. O esquema de Lax--Wendroff preserva melhor a forma da solução e apresenta maior precisão.
 
-\subsection{Regime dominado pela advecção}
+\newpage
+\subsection{Regimes de transporte}
 
-Neste regime observa-se transporte dominante do perfil Gaussiano.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\textwidth]{Gráficos/advecção_dominante.png}
-\caption{Regime dominado pela advecção.}
-\end{figure}
-
-\subsection{Regime dominado pela difusão}
-
-Neste caso verifica-se alargamento progressivo do perfil e redução da amplitude máxima.
+As Figuras (2, 3 e 4) apresentam os diferentes regimes de transporte analisados: difusivo, intermédio e advectivo.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{Gráficos/difusão_dominante.png}
-\caption{Regime dominado pela difusão.}
-\end{figure}
-
-\subsection{Regime equilibrado}
-
-Observa-se coexistência entre transporte e difusão.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\textwidth]{Gráficos/equilibrado.png}
-\caption{Regime equilibrado.}
+\begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Gráficos/difusão_dominante.png}
+    \caption{Regime difusivo.}
+    \label{fig:difusivo}
+\end{minipage}
+\hfill
+\begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Gráficos/equilibrado.png}
+    \caption{Regime intermédio.}
+    \label{fig:intermedio}
+\end{minipage}
+\hfill
+\begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Gráficos/advecção_dominante.png}
+    \caption{Regime advectivo.}
+    \label{fig:advectivo}
+\end{minipage}
 \end{figure}
 
 \subsection{Comparação final}
@@ -220,7 +301,7 @@ A análise global evidencia a influência do número de Péclet na dinâmica do 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{Gráficos/comparacao_final.png}
+\includegraphics[width=0.5\textwidth]{Gráficos/comparacao_final.png}
 \caption{Comparação final entre os diferentes regimes físicos.}
 \end{figure}
 
@@ -232,57 +313,9 @@ Os resultados obtidos demonstram a forte influência do número de Péclet na ev
 
 A comparação entre os esquemas numéricos evidenciou diferenças importantes em termos de precisão e difusão numérica. O esquema Upwind é mais estável, mas menos preciso, enquanto o esquema de Lax--Wendroff apresenta melhor preservação da solução.
 
-Os resultados são consistentes com o comportamento físico esperado.
-
-\newpage
-\section*{Anexos}
-
-\addcontentsline{toc}{section}{Anexos}
-
-Nesta secção apresentam-se representações adicionais da solução numérica obtida para diferentes regimes físicos da equação de advecção--difusão.
-
-\subsection*{Representações bidimensionais (2D)}
-
-\subsubsection*{Regime dominado pela advecção}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.85\textwidth]{Gráficos/adveccao_espaço-tempo.png}
-\caption{Representação 2D da evolução no regime dominado pela advecção.}
-\end{figure}
-
-\subsubsection*{Regime dominado pela difusão}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.85\textwidth]{Gráficos/Difusao_espaço-tempo.png}
-\caption{Representação 2D da evolução no regime dominado pela difusão.}
-\end{figure}
-
-\subsubsection*{Regime equilibrado}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.85\textwidth]{Gráficos/Equilibrado_espaço-tempo.png}
-\caption{Representação 2D da evolução no regime equilibrado.}
-\end{figure}
-
-\subsection*{Representação tridimensional (3D)}
-
-\subsubsection*{Regime dominado pela advecção}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.85\textwidth]{Gráficos/Advecção_Mesh_3D.png}
-\caption{Representação tridimensional da solução no regime dominado pela advecção.}
-\end{figure}
-
-\subsection*{Animações da simulação}
-
-\begin{itemize}
-\item \href{https://github.com/tiagobbernardo/MFE--equacao-de-adveccao-difusao/blob/7307a46e6ba824f2dffa17b3ad4cd375a18a2eb9/animations/adveccao_dominante.gif}{Regime advectivo (GIF)}
-\item \href{https://github.com/tiagobbernardo/MFE--equacao-de-adveccao-difusao/blob/7307a46e6ba824f2dffa17b3ad4cd375a18a2eb9/animations/Difusao_dominante.gif}{Regime difusivo (GIF)}
-\item \href{https://github.com/tiagobbernardo/MFE--equacao-de-adveccao-difusao/blob/7307a46e6ba824f2dffa17b3ad4cd375a18a2eb9/animations/equilibrado.gif}{Regime equilibrado (GIF)}
-\end{itemize}
+\vspace{0.25cm}
+\begin{center}
+{\footnotesize Repositório GitHub: \url{https://github.com/tiagobbernardo/MFE--equacao-de-adveccao-difusao}}
+\end{center}
 
 \end{document}
